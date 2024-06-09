@@ -1,0 +1,50 @@
+
+乘法计算：
+Chisel编程语言实现了一个N位的流水线乘法器模块
+latency  ：表示乘法器的延迟，即结果需要多少个时钟周期才能有效。默认值是0。
+  def generatePipe(en: Bool, data: UInt, latency: Int): (Bool, UInt) = {
+    if (latency == 0) {
+      (en, data)
+    }
+    else {
+      val done  = RegNext(Mux(io.flush, false.B, en), false.B)
+      val bits  = RegEnable(data, en)
+      generatePipe(done, bits, latency - 1)
+    }
+  }
+可配置延迟的N位乘法器。通过 generatePipe函数，乘法器的输出结果可以经过多个时钟周期的延迟，以模拟硬件中的流水线操作
+
+
+
+除法计算：
+每个周期计算两位
+* divZero：输出信号，表示除数是否为零。
+* divident 和 divisor：输入操作数（被除数和除数）。
+* quotient 和 remainder：输出结果（商和余数）。
+
+  // some constant parameters
+  val resultWidth = oprWidth * 2 + 1
+  val cycleCount  = (oprWidth / 2f).ceil.toInt //需要多少个周期进行除法操作
+
+
+  // state of finite state machine
+  val sIdle :: sRunning :: sEnd :: Nil = Enum(3)
+  val state = RegInit(sIdle)
+
+定义了一个有限状态机
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
